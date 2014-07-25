@@ -13,7 +13,6 @@ fi
 git reset --hard
 git clean -f -d
 git checkout `cat ../ffmpeg-version`
-patch -p1 <../FFmpeg-VPlayer.patch
 [ $PIPESTATUS == 0 ] || exit 1
 
 git log --pretty=format:%H -1 > ../ffmpeg-version
@@ -64,11 +63,12 @@ FFMPEG_FLAGS="--target-os=linux \
   --disable-demuxer=dts \
   --disable-parser=dca \
   --disable-decoder=dca \
-  --enable-asm \
+  --disable-asm \
   --enable-version3"
 
 
-for version in neon armv7 vfp armv6; do
+#for version in neon armv7 vfp armv6; do
+for version in armv7; do
 
   cd $SOURCE
 
@@ -106,12 +106,7 @@ for version in neon armv7 vfp armv6; do
   make -j4 || exit 1
   make install || exit 1
 
-  rm libavcodec/inverse.o
-  $CC -lm -lz -shared --sysroot=$SYSROOT -Wl,--no-undefined -Wl,-z,noexecstack $EXTRA_LDFLAGS libavutil/*.o libavutil/arm/*.o libavcodec/*.o libavcodec/arm/*.o libavformat/*.o libswresample/*.o libswscale/*.o -o $PREFIX/libffmpeg.so
-
-  $AR rcs $PREFIX/libffmpeg.a libavutil/*.o libavutil/arm/*.o libavcodec/*.o libavcodec/arm/*.o libavformat/*.o libswresample/*.o libswscale/*.o  
-
-  cp $PREFIX/libffmpeg.so $PREFIX/libffmpeg-debug.so
-  arm-linux-androideabi-strip --strip-unneeded $PREFIX/libffmpeg.so
+  $AR rcs $PREFIX/libffmpeg.a libavutil/*.o libavcodec/*.o libavformat/*.o libswresample/*.o libswscale/*.o  
+  arm-linux-androideabi-strip --strip-unneeded $PREFIX/libffmpeg.a
 
 done
