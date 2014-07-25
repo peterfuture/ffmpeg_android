@@ -88,6 +88,7 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-demuxer=pcm_u8 \
   --enable-demuxer=mp3 \
   --enable-demuxer=mov \
+  --enable-demuxer=rm \
   --enable-decoder=aac \
   --enable-decoder=aac_latm \
   --enable-decoder=ac3 \
