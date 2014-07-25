@@ -87,6 +87,7 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-demuxer=pcm_u32le \
   --enable-demuxer=pcm_u8 \
   --enable-demuxer=mp3 \
+  --enable-demuxer=mov \
   --enable-decoder=aac \
   --enable-decoder=aac_latm \
   --enable-decoder=ac3 \
@@ -117,6 +118,7 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-decoder=adpcm_ima_rad \
   --enable-decoder=adpcm_ima_smjpeg \
   --enable-decoder=adpcm_ima_wav \
+  --enable-decoder=wav_pack \
   --enable-decoder=adpcm_ima_ws \
   --enable-decoder=adpcm_ms \
   --enable-decoder=adpcm_sbpro_2 \
@@ -164,6 +166,7 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-decoder=pcm_u24be \
   --enable-decoder=pcm_u24le \
   --enable-decoder=bmv_audio \
+  --enable-decoder=vorbis \
   --enable-decoder=cook \
   --enable-decoder=dsicinaudio \
   --enable-decoder=eac3 \
