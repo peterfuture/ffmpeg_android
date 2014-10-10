@@ -12,7 +12,7 @@ fi
 
 git reset --hard
 git clean -f -d
-git checkout `cat ../ffmpeg-version`
+#git checkout `cat ../ffmpeg-version`
 [ $PIPESTATUS == 0 ] || exit 1
 
 git log --pretty=format:%H -1 > ../ffmpeg-version
@@ -46,12 +46,9 @@ FFMPEG_FLAGS="--target-os=linux \
   --disable-ffprobe \
   --disable-ffserver \
   --disable-avdevice \
-  --disable-avfilter \
   --disable-encoders \
   --disable-muxers \
-  --disable-filters \
   --disable-devices \
-  --disable-everything \
   --enable-protocols  \
   --enable-parsers \
   --enable-demuxers \
@@ -60,9 +57,6 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-network \
   --enable-swscale  \
   --disable-demuxer=sbg \
-  --disable-demuxer=dts \
-  --disable-parser=dca \
-  --disable-decoder=dca \
   --disable-asm \
   --enable-version3"
 
@@ -106,7 +100,7 @@ for version in armv7; do
   make -j4 || exit 1
   make install || exit 1
 
-  $AR rcs $PREFIX/libffmpeg.a libavutil/*.o libavcodec/*.o libavformat/*.o libswresample/*.o libswscale/*.o  
-  arm-linux-androideabi-strip --strip-unneeded $PREFIX/libffmpeg.a
+  #$AR rcs $PREFIX/libffmpeg.a libavutil/*.o libavcodec/*.o libavformat/*.o libswresample/*.o libswscale/*.o  
+  #arm-linux-androideabi-strip --strip-unneeded $PREFIX/libffmpeg.a
 
 done

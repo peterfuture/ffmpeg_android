@@ -39,6 +39,7 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-cross-compile \
   --cross-prefix=arm-linux-androideabi- \
   --enable-shared \
+  --enable-static \
   --disable-symver \
   --disable-doc \
   --disable-ffplay \
@@ -46,10 +47,8 @@ FFMPEG_FLAGS="--target-os=linux \
   --disable-ffprobe \
   --disable-ffserver \
   --disable-avdevice \
-  --disable-avfilter \
   --disable-encoders \
   --disable-muxers \
-  --disable-filters \
   --disable-devices \
   --disable-everything \
   --enable-protocol=file  \
