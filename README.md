@@ -4,13 +4,10 @@ ffmpeg for android
 From: https://github.com/yixia/FFmpeg-Android
 
 
-Build
+## Build
 -----
 
-1 Install NDK & export ANDROID_NDK=/path/to/your/android-ndk
-
-2 ./build-for-android.sh
-
-3 libffmpeg.so & libffmpeg.a will be built to `build/ffmpeg/{neon,armv7,vfp,armv6}/`
-
-[comments] build-audio-only.sh is a temp script including audio only
+0. [Install ToolChain](https://github.com/peterfuture/dttv-android/wiki/1-%E5%AE%89%E8%A3%85android-arm%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E9%93%BE)
+1. `$./build-for-android.sh`
+2. will be built to `build/ffmpeg/armv7/`
+3. `export DT_FFMPEG_ANDROID_DIR=/path/to/ffmpeg_android/build/ffmpeg/armv7`

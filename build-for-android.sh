@@ -19,7 +19,7 @@ git log --pretty=format:%H -1 > ../ffmpeg-version
 
 TOOLCHAIN=/tmp/vplayer
 SYSROOT=$TOOLCHAIN/sysroot/
-$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --platform=android-14 --install-dir=$TOOLCHAIN
+$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --platform=android-19 --install-dir=$TOOLCHAIN
 
 export PATH=$TOOLCHAIN/bin:$PATH
 export CC="ccache arm-linux-androideabi-gcc"
@@ -97,7 +97,7 @@ for version in armv7; do
   [ $PIPESTATUS == 0 ] || exit 1
 
   make clean
-  make -j4 || exit 1
+  make -j32 || exit 1
   make install || exit 1
 
   #$AR rcs $PREFIX/libffmpeg.a libavutil/*.o libavcodec/*.o libavformat/*.o libswresample/*.o libswscale/*.o  
