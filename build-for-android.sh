@@ -3,41 +3,48 @@
 DEST=`pwd`/build/ffmpeg && rm -rf $DEST
 SOURCE=`pwd`/ffmpeg
 
+#=================GET FFMPEG CODE=====================
 if [ -d ffmpeg ]; then
   cd ffmpeg
 else
   git clone git://source.ffmpeg.org/ffmpeg.git ffmpeg
   cd ffmpeg
 fi
+#=====================================================
 
-git reset --hard
-git clean -f -d
+#git reset --hard
+#git clean -f -d
 #git checkout `cat ../ffmpeg-version`
-[ $PIPESTATUS == 0 ] || exit 1
+#[ $PIPESTATUS == 0 ] || exit 1
+#git log --pretty=format:%H -1 > ../ffmpeg-version
 
-git log --pretty=format:%H -1 > ../ffmpeg-version
 
-TOOLCHAIN=/tmp/vplayer
-SYSROOT=$TOOLCHAIN/sysroot/
-$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --platform=android-19 --install-dir=$TOOLCHAIN
 
-export PATH=$TOOLCHAIN/bin:$PATH
-export CC="ccache arm-linux-androideabi-gcc"
-export LD=arm-linux-androideabi-ld
-export AR=arm-linux-androideabi-ar
+#====================TOOLCHAIN========================
+TOOLCHAIN_32=/tmp/dtp_32
+SYSROOT_32=$TOOLCHAIN_32/sysroot/
+$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --platform=android-19 --arch=arm --install-dir=$TOOLCHAIN_32
 
-CFLAGS="-O3 -Wall -mthumb -pipe -fpie -fasm \
-  -finline-limit=300 -ffast-math \
-  -fstrict-aliasing -Werror=strict-aliasing \
-  -fmodulo-sched -fmodulo-sched-allow-regmoves \
-  -Wno-psabi -Wa,--noexecstack \
-  -D__ARM_ARCH_5__ -D__ARM_ARCH_5E__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__ \
-  -DANDROID -DNDEBUG"
+TOOLCHAIN_64=/tmp/dtp_64
+SYSROOT_64=$TOOLCHAIN_64/sysroot/
+$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --platform=android-21 --toolchain=aarch64-linux-android-4.9 --install-dir=$TOOLCHAIN_64
 
-FFMPEG_FLAGS="--target-os=linux \
-  --arch=arm \
-  --enable-cross-compile \
-  --cross-prefix=arm-linux-androideabi- \
+export PATH=$TOOLCHAIN_32/bin:$PATH
+export PATH=$TOOLCHAIN_64/bin:$PATH
+#=====================================================
+
+FF_CFG_FLAGS=
+EXTRA_CFLAGS=
+EXTRA_LDFLAGS=
+
+CFLAGS="-O3 -Wall -pipe \
+    -std=c99 \
+    -ffast-math \
+    -fstrict-aliasing -Werror=strict-aliasing \
+    -Wno-psabi -Wa,--noexecstack \
+    -DANDROID -DNDEBUG"
+
+FFMPEG_FLAGS="
   --enable-shared \
   --disable-symver \
   --disable-doc \
@@ -63,27 +70,29 @@ FFMPEG_FLAGS="--target-os=linux \
   --enable-version3"
 
 
-#for version in neon armv7 vfp armv6; do
-for version in armv7; do
+#for version in neon armv7 vfp armv6 armv8; do
+for version in armv7 armv8; do
 
   cd $SOURCE
+  make clean
+  make distclean
 
   case $version in
-    neon)
-      EXTRA_CFLAGS="-march=armv7-a -mfpu=neon -mfloat-abi=softfp -mvectorize-with-neon-quad"
-      EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
-      ;;
     armv7)
-      EXTRA_CFLAGS="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=softfp"
-      EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
+      FF_CFG_FLAGS="--arch=arm --cpu=cortex-a8"
+      FF_CFG_FLAGS="$FF_CFG_FLAGS --enable-neon"
+      FF_CFG_FLAGS="$FF_CFG_FLAGS --enable-thumb"
+      FF_CROSS_PREFIX=arm-linux-androideabi
+      
+      EXTRA_CFLAGS="-march=armv7-a -mcpu=cortex-a8 -mfpu=vfpv3-d16 -mfloat-abi=softfp -mthumb"
+      EXTRA_LDFLAGS="-Wl,--fix-cortex-a8" 
       ;;
-    vfp)
-      EXTRA_CFLAGS="-march=armv6 -mfpu=vfp -mfloat-abi=softfp"
-      EXTRA_LDFLAGS=""
-      ;;
-    armv6)
-      EXTRA_CFLAGS="-march=armv6"
-      EXTRA_LDFLAGS=""
+    armv8)
+      FF_CFG_FLAGS="--arch=aarch64"
+      FF_CROSS_PREFIX=aarch64-linux-android
+      
+      EXTRA_CFLAGS=""
+      EXTRA_LDFLAGS="$FF_EXTRA_LDFLAGS"
       ;;
     *)
       EXTRA_CFLAGS=""
@@ -92,13 +101,22 @@ for version in armv7; do
   esac
 
   PREFIX="$DEST/$version" && mkdir -p $PREFIX
-  FFMPEG_FLAGS="$FFMPEG_FLAGS --prefix=$PREFIX"
+  FF_CFG_FLAGS="$FF_CFG_FLAGS $FFMPEG_FLAGS";
+  FF_CFG_FLAGS="$FF_CFG_FLAGS --prefix=$PREFIX"
+  FF_CFG_FLAGS="$FF_CFG_FLAGS --cross-prefix=${FF_CROSS_PREFIX}-"
+  FF_CFG_FLAGS="$FF_CFG_FLAGS --enable-cross-compile"
+  FF_CFG_FLAGS="$FF_CFG_FLAGS --target-os=linux"
 
-  ./configure $FFMPEG_FLAGS --extra-cflags="$CFLAGS $EXTRA_CFLAGS" --extra-ldflags="$EXTRA_LDFLAGS" | tee $PREFIX/configuration.txt
+
+  export CC="{$FF_CROSS_PREFIX}-gcc"
+  export LD="{$FF_CROSS_PREFIX}-ld"
+  export AR="{$FF_CROSS_PREFIX}-ar"
+  export STRIP="{$FF_CROSS_PREFIX}-strip"
+
+  ./configure $FF_CFG_FLAGS --extra-cflags="$CFLAGS $EXTRA_CFLAGS" --extra-ldflags="$EXTRA_LDFLAGS" | tee $PREFIX/configuration.txt
   cp config.* $PREFIX
   [ $PIPESTATUS == 0 ] || exit 1
 
-  make clean
   make -j32 || exit 1
   make install || exit 1
 
