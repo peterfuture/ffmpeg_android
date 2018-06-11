@@ -53,7 +53,6 @@ FFMPEG_FLAGS="
   --disable-ffplay \
   --disable-ffmpeg \
   --disable-ffprobe \
-  --disable-ffserver \
   --disable-avdevice \
   --disable-encoders \
   --disable-muxers \
@@ -70,6 +69,7 @@ FFMPEG_FLAGS="
   --enable-network \
   --enable-swscale  \
   --disable-asm \
+  --disable-linux-perf \
 
   --enable-demuxer=aac \
   --enable-demuxer=ac3 \
@@ -192,7 +192,7 @@ for version in armv7 armv8; do
       FF_CROSS_PREFIX=arm-linux-androideabi
       
       EXTRA_CFLAGS="-march=armv7-a -mcpu=cortex-a8 -mfpu=vfpv3-d16 -mfloat-abi=softfp -mthumb"
-      EXTRA_LDFLAGS="-Wl,--fix-cortex-a8" 
+      EXTRA_LDFLAGS="-Wl,--fix-cortex-a8"
       ;;
     armv8)
       FF_CFG_FLAGS="--arch=aarch64"
