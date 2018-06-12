@@ -23,11 +23,11 @@ fi
 #====================TOOLCHAIN========================
 TOOLCHAIN_32=/tmp/dtp_32
 SYSROOT_32=$TOOLCHAIN_32/sysroot/
-$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --force --platform=android-19 --arch=arm --install-dir=$TOOLCHAIN_32
+$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=19 --arch=arm --force --install-dir=$TOOLCHAIN_32
 
 TOOLCHAIN_64=/tmp/dtp_64
 SYSROOT_64=$TOOLCHAIN_64/sysroot/
-$ANDROID_NDK/build/tools/make-standalone-toolchain.sh --force --platform=android-21 --toolchain=aarch64-linux-android-4.9 --install-dir=$TOOLCHAIN_64
+$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=24 --arch=arm64 --force --install-dir=$TOOLCHAIN_64
 
 export PATH=$TOOLCHAIN_32/bin:$PATH
 export PATH=$TOOLCHAIN_64/bin:$PATH
