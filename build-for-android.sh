@@ -21,16 +21,16 @@ fi
 
 
 #====================TOOLCHAIN========================
-TOOLCHAIN_32=/tmp/dtp_32
-SYSROOT_32=$TOOLCHAIN_32/sysroot/
-$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=19 --arch=arm --force --install-dir=$TOOLCHAIN_32
+#TOOLCHAIN_32=/tmp/dtp_32
+#SYSROOT_32=$TOOLCHAIN_32/sysroot/
+#$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=19 --arch=arm --force --install-dir=$TOOLCHAIN_32
 
-TOOLCHAIN_64=/tmp/dtp_64
-SYSROOT_64=$TOOLCHAIN_64/sysroot/
-$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=24 --arch=arm64 --force --install-dir=$TOOLCHAIN_64
+#TOOLCHAIN_64=/tmp/dtp_64
+#SYSROOT_64=$TOOLCHAIN_64/sysroot/
+#$ANDROID_NDK/build/tools/make_standalone_toolchain.py --api=24 --arch=arm64 --force --install-dir=$TOOLCHAIN_64
 
-export PATH=$TOOLCHAIN_32/bin:$PATH
-export PATH=$TOOLCHAIN_64/bin:$PATH
+#export PATH=$TOOLCHAIN_32/bin:$PATH
+#export PATH=$TOOLCHAIN_64/bin:$PATH
 #=====================================================
 
 FF_CFG_FLAGS=
@@ -215,10 +215,10 @@ for version in armv7 armv8; do
   FF_CFG_FLAGS="$FF_CFG_FLAGS --target-os=android"
 
 
-  export CC="{$FF_CROSS_PREFIX}-gcc"
-  export LD="{$FF_CROSS_PREFIX}-ld"
-  export AR="{$FF_CROSS_PREFIX}-ar"
-  export STRIP="{$FF_CROSS_PREFIX}-strip"
+  #export CC="{$FF_CROSS_PREFIX}-gcc"
+  #export LD="{$FF_CROSS_PREFIX}-ld"
+  #export AR="{$FF_CROSS_PREFIX}-ar"
+  #export STRIP="{$FF_CROSS_PREFIX}-strip"
 
   ./configure $FF_CFG_FLAGS --extra-cflags="$CFLAGS $EXTRA_CFLAGS" --extra-ldflags="$EXTRA_LDFLAGS" | tee $PREFIX/configuration.txt
   cp config.* $PREFIX
