@@ -40,7 +40,7 @@ EXTRA_LDFLAGS=
 CFLAGS="-O3 -Wall -pipe \
     -std=c99 \
     -ffast-math \
-    -fstrict-aliasing -Werror=strict-aliasing \
+    -Werror=strict-aliasing \
     -Wno-psabi -Wa,--noexecstack \
     -DANDROID -DNDEBUG"
 
@@ -212,7 +212,7 @@ for version in armv7 armv8; do
   FF_CFG_FLAGS="$FF_CFG_FLAGS --prefix=$PREFIX"
   FF_CFG_FLAGS="$FF_CFG_FLAGS --cross-prefix=${FF_CROSS_PREFIX}-"
   FF_CFG_FLAGS="$FF_CFG_FLAGS --enable-cross-compile"
-  FF_CFG_FLAGS="$FF_CFG_FLAGS --target-os=linux"
+  FF_CFG_FLAGS="$FF_CFG_FLAGS --target-os=android"
 
 
   export CC="{$FF_CROSS_PREFIX}-gcc"
